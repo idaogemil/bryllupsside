@@ -384,20 +384,21 @@ body {
             color: var(--gold-accent);
         }
 
+       /* Selve gitteret med 3 kolonner */
         .gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(3, 1fr); /* Tvinger 3 billeder på hver række */
+            gap: 15px; /* Afstanden mellem billederne */
             margin-top: 40px;
         }
 
+        /* Billederne gøres til perfekte firkanter */
         .gallery img {
             width: 100%;
-            height: 280px; 
-            object-fit: cover;
-            border-radius: 4px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-            transition: transform 0.3s ease;
+            aspect-ratio: 1 / 1; /* Dette er tricket: Gør dem altid 100% kvadratiske */
+            object-fit: cover; /* Sørger for, at motivet fylder firkanten uden at blive strukket */
+            border-radius: 10px; /* Bevarer de bløde kanter */
+            display: block;
         }
 
         .gallery img:hover {
@@ -437,17 +438,7 @@ body {
                 padding: 30px 20px;
                 margin: 20px auto;
             }
-            
             /* Gør galleriet til to kolonner */
-            .gallery {
-                grid-template-columns: 1fr 1fr;
-            }
-            
-            .gallery img {
-                height: 150px;
-            }
-        }
-        }
     </style>
 </head>
 <body>
