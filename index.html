@@ -413,16 +413,25 @@ body {
             border-top: 1px solid #eaeaea;
         }
 
-      /* Mobilvenlig tilpasning */
-        @media (max-width: 768px) {
-            h2 { font-size: 2.2rem; }
-            header .script-font { font-size: 4.5rem !important; }
-            
-            /* Gør kortene (Tid & Sted) under hinanden */
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
-
+@media (max-width: 768px) {
+    h2 { font-size: 2.2rem; }
+    header .script-font { font-size: 4.5rem !important; }
+    
+    /* --- ERSTAT DIN NUVÆRENDE HEADER MED DETTE --- */
+    header {
+        height: 100vh;
+        height: 100svh;
+        background-size: cover !important;
+        background-position: center center !important;
+        background-repeat: no-repeat !important;
+    }
+    /* --------------------------------------------- */
+    
+    /* Gør kortene (Tid & Sted) under hinanden */
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+        }
             /* Gør tidslinjen smal */
             .timeline {
                 padding: 30px 20px;
