@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ida & Emils Bryllup</title>
+    
+    <!-- Importerer de nye Google Fonts: Cormorant Garamond, Montserrat og Alex Brush -->
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ----------------------------------------------------
+           1. AUTOMATISK KUVERT-ANIMATION (INTRO)
+           ---------------------------------------------------- */
+        :root {
+            --bg-envelope: #f4ece1;
+            --envelope-color: #e3d5c1;
+            --envelope-dark: #d2bf9f;
+            --paper-color: #ffffff;
+            --primary-color: #f7f5f0; 
+            --text-color: #333333;
+            --accent-color: #8c907b; 
+            --gold-accent: #c4a977; 
+        }
+
+        #intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: var(--bg-envelope);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 1s ease-in-out;
+            cursor: pointer; /* Viser at man kan klikke hvis den sidder fast */
+        }
+
+        .envelope-wrapper {
+            position: relative;
+            width: 380px;
+            height: 280px;
+            background-color: var(--envelope-dark);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border-bottom-left-radius: 6px;
+            border-bottom-right-radius: 6px;
+            perspective: 1000px; 
+        }
+
+        .envelope {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .envelope::before {
+            content: '';
+            position: absolute;
+            z-index: 3;
+            border-left: 190px solid transparent;
+            border-right: 190px solid transparent;
+            border-bottom: 140px solid var(--envelope-color);
+            bottom: 0;
+            left: 0;
+        }
+
+        .envelope::after {
+            content: '';
+            position: absolute;
+            z-index: 3;
+            border-top: 140px solid transparent;
+            border-bottom: 140px solid transparent;
+            border-left: 190px solid rgba(255,255,255,0.05);
+            border-right: 190px solid rgba(0,0,0,0.03);
+            bottom: 0;
+            left: 0;
+        }
+
+        .flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-left: 190px solid transparent;
+            border-right: 190px solid transparent;
+            border-top: 140px solid var(--envelope-color);
+            transform-origin: top;
+            z-index: 4;
+            transition: transform 0.8s ease-in-out;
+        }
+
+        .letter {
+            position: absolute;
+            bottom: 10px;
+            left: 20px;
+            width: 340px;
+            height: 240px;
+            background-color: var(--paper-color);
+            border-radius: 4px;
+            z-index: 2;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            transition: transform 0.8s ease-in-out;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .seal {
+            position: absolute;
+            top: 120px;
+            left: 170px;
+            width: 40px;
+            height: 40px;
+            background-color: #c9a0dc;
+            border-radius: 50%;
+            z-index: 5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: transform 0.4s ease, opacity 0.4s;
+        }
+
+        /* Animations-klasser */
+        .envelope-wrapper.open-flap .flap {
+            transform: rotateX(180deg);
+        }
+        
+        .envelope-wrapper.open-flap .seal {
+            transform: scale(0);
+            opacity: 0;
+        }
+
+        .envelope-wrapper.lift-letter .letter {
+            transform: translateY(-110px);
+            z-index: 5;
+        }
+
+        #intro-screen.fade-out {
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+
+        /* ----------------------------------------------------
+           2. OPRINDELIG HJEMMESIDE DESIGN & STYLING
+           ---------------------------------------------------- */
+        
+        /* Brødtekst og Papir-tekstur baggrund */
+body {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 300;
+            background-color: var(--primary-color);
+            /* Her tilføjer vi dit billede som baggrund */
+            background-image: url('background1.jpg');
+            background-size: cover;
+            background-attachment: fixed; 
+            opacity: 1; /* Vi lader selve baggrunden være 1, og styrer transparensen via filter nedenfor */
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.7;
+        }
+
+        /* Dette er tricket: Vi lægger et halvgennemsigtigt lag ovenpå */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('background1.jpg');
+            background-size: cover;
+            opacity: 0.45; /* JUSTER HER: 0.1 er meget svagt, 0.5 er tydeligt */
+            z-index: -1; /* Sørger for det ligger bag alt indhold */
+        }
+
+        /* Overskrifter (Cormorant Garamond) */
+        h2, h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 400;
+            text-align: center;
+        }
+
+        /* Krydderi: Håndskriften (Alex Brush) */
+        .script-font {
+            font-family: 'Alex Brush', cursive;
+            font-weight: 400;
+            letter-spacing: 1px;
+            color: var(--text-color);
+        }
+
+        h2 {
+            font-size: 2.8rem;
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        /* Krydderi: Elegant floralt ornament under overskrifter i stedet for en streg */
+        h2::after {
+            content: '❦';
+            display: block;
+            text-align: center;
+            font-size: 1.8rem;
+            color: var(--gold-accent);
+            margin-top: 5px;
+            line-height: 1;
+            opacity: 0.7;
+        }
+
+        /* Fjerner ornamentet under overskrifter der ikke skal have det */
+        h2.no-line::after {
+            display: none;
+        }
+
+        p {
+            font-size: 1.05rem;
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 1.5rem auto;
+            color: #444;
+        }
+
+        /* Hero Billede centreret præcis som på screenshot */
+        header {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), url('knæforlovet.jpeg') center 75%/cover no-repeat;
+            text-align: center;
+            padding: 20px;
+        }
+
+        header p {
+    font-size: 1.4rem;
+    font-family: 'Cormorant Garamond', sans-serif; 
+    font-weight: 500; 
+    color: #000000; 
+    text-shadow: 0px 0px 10px rgba(255,255,255,1), 0px 0px 20px rgba(255,255,255,1)
+    letter-spacing: 0.5px;
+    margin-top: 10px;
+}
+        }
+
+        /* Lille skygge på selve overskriften for at sikre læsbarheden på det lyse billede */
+        header .script-font {
+            text-shadow: 0px 2px 15px rgba(255,255,255,0.9);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        /* Krydderi: Stationery-look på infokort med elegant dobbeltramme */
+        .info-card {
+            background: rgba(255, 255, 255, 0.85);
+            padding: 45px 30px;
+            border-radius: 4px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            text-align: center;
+            position: relative;
+            border: 1px solid #eaeaea;
+        }
+
+        /* Den indre guld-ramme der giver indbydelseskort-effekten */
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 8px; 
+            left: 8px; 
+            right: 8px; 
+            bottom: 8px;
+            border: 1px solid var(--gold-accent);
+            opacity: 0.4;
+            pointer-events: none;
+            border-radius: 2px;
+        }
+
+        .info-card h3 {
+            font-size: 2.2rem;
+            margin-top: 0;
+            color: var(--accent-color);
+            position: relative;
+            z-index: 1;
+        }
+
+        .info-card strong {
+            display: block;
+            margin-top: 15px;
+            font-weight: 500;
+            color: var(--text-color);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .info-card p, .info-card a {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 25px;
+            background-color: var(--gold-accent);
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 400;
+            transition: background-color 0.3s;
+        }
+
+        .cta-button:hover {
+            background-color: #a88e5d;
+        }
+
+        .timeline {
+    max-width: 500px;
+    margin: 50px auto;
+    position: relative;
+    padding-left: 35px;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 60px 40px;
+    border-radius: 20px;
+    border: 1px solid rgba(196, 169, 119, 0.2);
+}
+
+.timeline::after {
+    content: '❦';
+    position: absolute;
+    right: -60px;
+    top: 40%;
+    font-size: 6rem;
+    color: var(--gold-accent);
+    opacity: 0.2;
+    pointer-events: none;
+}
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 40px;
+            text-align: left;
+        }
+
+        .timeline-time {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--accent-color);
+            margin: 0;
+        }
+
+        .timeline-text {
+            font-size: 1.05rem;
+            color: var(--text-color);
+            margin: 2px 0 0 0;
+        }
+
+        .timeline-break {
+            text-align: center;
+            margin: 30px 0 40px 0;
+            font-size: 2.2rem; 
+            color: var(--gold-accent);
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 40px;
+        }
+
+        .gallery img {
+            width: 100%;
+            height: 280px; 
+            object-fit: cover;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery img:hover {
+            transform: scale(1.03);
+        }
+
+        footer {
+            text-align: center;
+            padding: 60px 20px;
+            background-color: rgba(255, 255, 255, 0.85);
+            margin-top: 60px;
+            color: var(--accent-color);
+            border-top: 1px solid #eaeaea;
+        }
+
+      /* Mobilvenlig tilpasning */
+        @media (max-width: 768px) {
+            h2 { font-size: 2.2rem; }
+            header .script-font { font-size: 4.5rem !important; }
+            
+            /* Gør kortene (Tid & Sted) under hinanden */
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            /* Gør tidslinjen smal */
+            .timeline {
+                padding: 30px 20px;
+                margin: 20px auto;
+            }
+            
+            /* Gør galleriet til to kolonner */
+            .gallery {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .gallery img {
+                height: 150px;
+            }
+        }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- INTRO-SKÆRM -->
+    <div id="intro-screen">
+        <div class="envelope-wrapper" id="envelopeWrapper">
+            <div class="envelope">
+                <div class="flap"></div>
+                <div class="seal">❤️</div>
+                <div class="letter">
+                    <div class="script-font" style="margin: 0; font-size: 42px;">Ida & Emil</div>
+                    <p style="font-family: 'Cormorant Garamond', serif; font-size: 16px; margin: 8px 0 0 0; font-style: italic; color: #8a7a78;">Velkommen</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HERO / VELKOMST SEKTION -->
+    <header>
+        <div class="script-font" style="font-size: 6rem; line-height: 1; margin-bottom: 0.5rem; color: #333;">Ida & Emil</div>
+        <p style="color: #333;">Vi glæder os til at fejre kærligheden med jer!</p>
+    </header>
+
+    <div class="container">
+        
+        <!-- INTRO -->
+        <section>
+            <h2>Velkommen</h2>
+            <p>I forlængelse af vores invitation, har vi samlet lidt praktisk information her på siden for at gøre det nemt for jer. Vores absolut største ønske er at fejre dagen og nyde en uforglemmelig aften i jeres selskab.</p>
+        </section>
+
+        <!-- DE TRE PRAKTISKE INFO-KORT -->
+        <section class="info-grid">
+            
+            <div class="info-card">
+                <h3>Tid & Sted</h3>
+                <p><strong>Vielse kl 11</strong><br>
+                Rungsted Kirke</p>
+                <p><strong>Bryllupsfest kl 16</strong><br>
+                Charlottenlund Travbane<br>
+                Traverbanevej 10, 2920 Charlottenlund</p>
+            </div>
+
+            <div class="info-card">
+                <h3>Praktisk</h3>
+                <p><strong>S.U.</strong><br>
+                Svar udbedes venligst senest den 12. april 2027 til Ida på:<br>
+                <a href="mailto:idasoelje@gmail.com" style="color: var(--gold-accent); text-decoration: none;">idasoelje@gmail.com</a></p>
+
+                <p><strong>Toastmaster</strong><br>
+                Aftenens toastmaster er Johannes Lindegaard. Eventuelle taler og festlige indslag bedes venligst koordineret med ham i god tid forud for festen.<br>
+                Han kan kontaktes på: <a href="mailto:email@email.dk" style="color: var(--gold-accent); text-decoration: none;">email@email.dk</a></p>
+            </div>
+
+            <div class="info-card">
+                <h3>Gaver</h3>
+                <p>Skulle I ønske at glæde os med en gave, har vi oprettet en ønskeseddel på Ønskeskyen.</p>
+                <a href="https://onskeskyen.dk/s/esawak" target="_blank" class="cta-button">Se ønskeseddel her</a>
+            </div>
+
+        </section>
+
+        <!-- TIDSLINJE / TIDSPLAN -->
+        <section>
+            <h2>Tidsplan</h2>
+            <p>Her kan I se, hvordan dagen kommer til at forløbe:</p>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <p class="timeline-time">11:00</p>
+                    <p class="timeline-text">Vielse i Rungsted Kirke</p>
+                </div>
+                <div class="timeline-item">
+                    <p class="timeline-time">12:00</p>
+                    <p class="timeline-text">Reception med let forplejning ved kirken</p>
+                </div>
+                
+                <div class="timeline-break script-font">~ Senere ~</div>
+                <div class="timeline-item">
+                    <p class="timeline-time">16:00</p>
+                    <p class="timeline-text">Bryllupskage & bobler</p>
+                </div>
+                <div class="timeline-item">
+                    <p class="timeline-time">18:00</p>
+                    <p class="timeline-text">Middag med 3-retters menu</p>
+                </div>
+                <div class="timeline-item">
+                    <p class="timeline-time">23:00</p>
+                    <p class="timeline-text">Brudevals og fest</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FULDT BILLEDGALLERI -->
+        <section>
+            <h2>Vores Historie</h2>
+            <p style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.2rem;">Et lille udpluk af vores yndlingsminder sammen.</p>
+            
+            <div class="gallery">
+                <img src="idaogemilsitges.jpeg" alt="Ida og Emil i Sitges" style="object-position: bottom;">
+                <img src="sølvbryllupkys.JPG" alt="Sølvbryllupskys">
+                <img src="sølvbryllupcute.jpeg" alt="Sølvbryllup">
+                <img src="fanø.jpeg" alt="Fanø">
+                <img src="verona.jpeg" alt="Verona">
+                <img src="chile.jpeg" alt="Chile">
+                <img src="selfieforlovet.JPG" alt="Selfie som forlovede">
+                <img src="knæforlovet.jpeg" alt="Frieri på knæ" style="object-position: 50% 85%;">
+                <img src="mostar.jpeg" alt="Mostar">
+                <img src="shelter.png" alt="Sheltertur">
+                <img src="hvar.png" alt="Hvar" style="object-position: bottom;">
+                <img src="cusco.JPG" alt="Cusco">
+            </div>
+        </section>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p style="margin-bottom: 0;">Vi glæder os til at se jer!</p>
+        <h2 class="script-font no-line" style="font-size: 4rem; margin-top: 10px; color: var(--accent-color);">Ida & Emil</h2>
+    </footer>
+
+    <!-- SKUDSIKKER JAVASCRIPT ANIMATION -->
+    <script>
+        // Lytter til at browseren er helt færdig med at opsætte siden før animationen startes
+        document.addEventListener("DOMContentLoaded", function() {
+            const wrapper = document.getElementById('envelopeWrapper');
+            const introScreen = document.getElementById('intro-screen');
+
+            // Funktion der fjerner intro-skærmen helt fra siden
+            const removeIntro = () => {
+                introScreen.classList.add('fade-out');
+                // Sætter en timer der helt fjerner elementet, så det ikke kan sidde fast og blokere
+                setTimeout(() => {
+                    introScreen.style.display = 'none';
+                }, 1000);
+            };
+
+            // Den automatiske animation
+            setTimeout(() => {
+                if (wrapper) wrapper.classList.add('open-flap');
+            }, 300);
+
+            setTimeout(() => {
+                if (wrapper) wrapper.classList.add('lift-letter');
+            }, 1200);
+            
+            setTimeout(() => {
+                removeIntro();
+            }, 2900);
+
+            // FALLBACK: Hvis det alligevel driller, kan man bare trykke hvorsomhelst på intro-skærmen, og så åbner siden!
+            if (introScreen) {
+                introScreen.addEventListener('click', () => {
+                    removeIntro();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
